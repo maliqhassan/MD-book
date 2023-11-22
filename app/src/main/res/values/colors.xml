@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar"></style>
+    <color name="colorPrimary">#61E1B6</color>
+    <color name="colorPrimaryDark">#25A57A</color>
+    <color name="colorAccent">#6060E0</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="dark_gray">#705151</color>
+
+</resources>

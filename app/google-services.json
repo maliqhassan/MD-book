@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56602202389",
+    "project_id": "mdbook-f9105",
+    "storage_bucket": "mdbook-f9105.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56602202389:android:f68d7f6b00206e3730d91c",
+        "android_client_info": {
+          "package_name": "com.alsam.mdbook_01"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnw9sD-5ntjqao3DV6b_h3bs3mwTF8fuU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
