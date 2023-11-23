@@ -28,9 +28,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates a view for editing the problems details
@@ -57,13 +66,14 @@ public class EditProblemDetailsActivity extends AppCompatActivity implements Dat
     private Date date;
     private String strDate;
 
-
+    SimpleDateFormat dateFormat;
+    String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_problem_details);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+        dateFormat  = new SimpleDateFormat("dd/MM/yy");
 
         // set the views and buttons appropriately by id's
         editTitle = findViewById(R.id.showTitle);
@@ -71,33 +81,33 @@ public class EditProblemDetailsActivity extends AppCompatActivity implements Dat
         editDescription = findViewById(R.id.editDescription);
         save = findViewById(R.id.done);
         cancel = findViewById(R.id.cancel);
-        UserManager.initManager();
-        final UserManager userManager = UserManager.getManager();
-        patient = (Patient) UserController.getController().getUser();
-        problemPos = getIntent().getExtras().getInt("problemPos");
-        problem = patient.getProblems().get(problemPos);
-        editTitle.setText(problem.getTitle());
-        editDescription.setText(problem.getDescription());
-        date = problem.getDate();
-        strDate = dateFormat.format(date);
-        editDate.setText(strDate);
+        Intent intent = getIntent();
+      id =  intent.getStringExtra("id");
 
+
+//        UserManager.initManager();
+
+        loadProblemData(id);
 
         // Switches to the main activity upon the click of the save button
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                problem.setTitle(editTitle.getText().toString());
-                problem.setDescription(editDescription.getText().toString());
-                userManager.saveUser(patient);
-                backToMainPage();
+
+                 updateData();
+
+//                userManager.saveUser(patient);
+              //  backToMainPage();
             }
         });
         // Switches to the main activity upon the click of the cancel button
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backToMainPage();
+
+                finish();
+
+//                backToMainPage();
             }
         });
 
@@ -109,6 +119,94 @@ public class EditProblemDetailsActivity extends AppCompatActivity implements Dat
 
             }
         });
+    }
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void updateData() {
+
+
+        {
+
+            String  title = editTitle.getText().toString();
+            String desc =editDescription.getText().toString();
+
+            // Reference to the document
+            DocumentReference documentRef = db.collection("problems").document(id);
+
+            // Create a Map with the updated data
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("date", strDate);
+            updates.put("description", desc);
+            updates.put("title", title);
+            updates.put("userid", userId);
+
+            // Update the document
+            documentRef.update(updates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // Document updated successfully
+
+                                finish();
+                                System.out.println("Document updated successfully");
+                            } else {
+                                // Handle the error
+                                Exception e = task.getException();
+                                if (e != null) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    String userId;
+    private void loadProblemData(String id ) {
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+// Reference to the document
+        DocumentReference documentRef = db.collection("problems").document(id);
+
+// Retrieve the data
+        documentRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    // Document exists, retrieve the data
+                     strDate = documentSnapshot.getString("date");
+                    String description = documentSnapshot.getString("description");
+                    String title = documentSnapshot.getString("title");
+                    userId   = documentSnapshot.getString("userid");
+
+
+//                    problemPos = getIntent().getExtras().getInt("problemPos");
+//                    problem = patient.getProblems().get(problemPos);
+                    editTitle.setText(title);
+                    editDescription.setText(description);
+
+
+
+
+                    editDate.setText(strDate);
+
+
+                    // Now you can use the retrieved data as needed
+                    // For example, display it in your UI or perform other actions
+                } else {
+                    // Document does not exist
+                }
+            }
+        });
+
+
+
+
+
+
+
     }
 
     /**

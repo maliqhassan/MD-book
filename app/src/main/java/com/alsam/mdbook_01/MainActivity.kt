@@ -45,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         checkIfUserIsLoggedIn()
     }
 
+    override fun onResume() {
+
+        LoadData(userID)
+        super.onResume()
+    }
+
     private fun initViews() {
         cardRecyclerView = findViewById(R.id.cardRecyclerView)
         cardRecyclerView.layoutManager = LinearLayoutManager(this)

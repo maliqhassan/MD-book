@@ -20,9 +20,12 @@
         android:theme="@style/Theme.MDBook_01"
         tools:targetApi="31">
         <activity
+            android:name=".ListRecordActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditProblem"
             android:exported="false" />
-        <activity android:name=".MapsActivity" />
+        <activity android:name=".MapActivity" />
         <activity android:name=".AddProblemActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".RegisterActivity" />
@@ -36,12 +39,15 @@
         <activity android:name=".PatientProblemList" />
         <activity android:name=".PatientProblemRecord" />
         <activity android:name=".GenerateQRActivity" />
+        <activity android:name=".EditProblemDetailsActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version" /> <!-- <meta-data -->
+        <!-- android:name="com.google.android.maps.v2.API_KEY" -->
+        <!-- android:value="@string/apikey" /> -->
         <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
+            android:name="com.google.android.geo.API_KEY"
             android:value="@string/apikey" />
 
         <activity

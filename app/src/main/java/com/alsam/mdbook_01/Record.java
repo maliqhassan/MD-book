@@ -9,11 +9,11 @@ import java.util.Date;
 class Record implements Serializable, Comparable {
 
     private String title;
-    private Date date;
+    private String date;
     private String description;
     private GeoLocation geoLocation;
     private ArrayList<BodyLocation> bodyLocations;
-    private ArrayList<Photo> photos;
+    private String photos;
     private String comment;
     private String recordID = "-1";
 
@@ -33,11 +33,11 @@ class Record implements Serializable, Comparable {
         }
         else {
             this.title = title;
-            this.date = new Date();
+            this.date = String.valueOf(new Date());
             this.description = "";
             this.bodyLocations = new ArrayList<>();
             this.geoLocation = null;
-            this.photos = new ArrayList<>();
+            this.photos =  "";
             this.comment = "";
         }
     }
@@ -51,27 +51,30 @@ class Record implements Serializable, Comparable {
      *                    including anything that might set it apart from previous records
      * @throws IllegalArgumentException if title or description lengths are invalid
      */
-    public Record(String title, Date date, String description) throws IllegalArgumentException {
-        if (title.length() < 1 || title.length() > 30 || description.length() > 300){
-            throw new IllegalArgumentException();
-        }
-        else {
+    public Record(String title, String date, String description,String photos) throws IllegalArgumentException {
+//        if (title.length() < 1 || title.length() > 30 || description.length() > 300){
+//            throw new IllegalArgumentException();
+//        }
+//        else {
+        {
             this.title = title;
             this.date = date;
             this.description = description;
 
 
-            this.bodyLocations = new ArrayList<>();
+            this.bodyLocations =  null;
 
             this.geoLocation = null;
 
 
-            this.photos = new ArrayList<>();
+            this.photos = photos;
             this.comment = "";
         }
     }
 
+    public Record() {
 
+    }
 
 
     /**
@@ -95,8 +98,8 @@ class Record implements Serializable, Comparable {
      * Associate a photo with this record
      * @param photo Photo to be added.
      */
-    public void addPhoto(Photo photo) {
-        this.photos.add(photo);
+    public void addPhoto(String photo) {
+        this.photos= photo;
     }
 
     /**
@@ -105,9 +108,9 @@ class Record implements Serializable, Comparable {
      * @return True on successful deletion, false if the photo could not be found.
      */
     //TODO: add this to test cases
-    public boolean deletePhoto(Photo photo) {
+    public boolean deletePhoto(String photo) {
         if(this.photos.contains(photo)){
-            this.photos.remove(photo);
+
             return true;
         }
         else {
@@ -120,7 +123,7 @@ class Record implements Serializable, Comparable {
      * @return ArrayList\<Photo\> of the records photos,
      *         including an ArrayList of zero items if there are no associated records.
      */
-    public ArrayList<Photo> getPhotos() {
+    public String getPhotos() {
         return(this.photos);
     }
 
@@ -184,7 +187,7 @@ class Record implements Serializable, Comparable {
     /**
      * @return The date the record was recorded on.
      */
-    public Date getDate() {
+    public String getDate() {
         return this.date;
     }
 

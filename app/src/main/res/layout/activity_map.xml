@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent">
+    <fragment
 
-
-    <fragment xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mapFragment"
+        android:layout_height="500dp"
+        android:layout_marginBottom="100dp"
+        android:id="@+id/map"
         tools:context=".MapsActivity"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,6 +22,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:elevation="10dp"
+
         android:background="@drawable/white_border"
         android:id="@+id/relLayout1">
 
@@ -38,7 +42,7 @@
             android:layout_toRightOf="@+id/ic_magnify"
             android:layout_marginLeft="15dp"
             android:layout_centerVertical="true"
-            android:textSize="15sp"
+            android:textSize="15dp"
             android:textColor="#000"
             android:id="@+id/input_search"
             android:background="@null"
@@ -54,7 +58,7 @@
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@id/relLayout1"
+        android:layout_below="@+id/map"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
@@ -66,18 +70,28 @@
         />
 
 
-    <ImageView
-        android:layout_width="40dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@id/relLayout1"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:scaleType="centerCrop"
-        android:id="@+id/addLocation"
-        android:src="@drawable/ic_add_location"
-        android:background="@drawable/white_border"
+        android:layout_below="@+id/map"
+        android:layout_margin="20dp"
+        android:id="@+id/add"
+        android:background="#fff"
+        >
 
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#000"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="18dp"
+            android:text="Save"
+            >
+
+        </TextView>
+
+    </RelativeLayout>
 
 </RelativeLayout>

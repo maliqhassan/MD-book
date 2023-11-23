@@ -20,7 +20,7 @@ public class UserManager {
         if (userManager == null){
             userManager = new UserManager();
             userManager.dataManager = DataManager.getDataManager();
-            userManager.elasticsearchController = ElasticsearchController.getController();
+//            userManager.elasticsearchController = ElasticsearchController.getController();
             userManager.userController = UserController.getController();
             userManager.localStorageController = LocalStorageController.getController();
             userManager.decomposer = new UserDecomposer();
@@ -52,16 +52,16 @@ public class UserManager {
             throws UserIDNotAvailableException, IllegalArgumentException, NetworkErrorException {
 
         /* Ensure userID is unique */
-        if (elasticsearchController.existsUser(userID)) {
-            throw new UserIDNotAvailableException();
-        }
+//        if (elasticsearchController.existsUser(userID)) {
+//            throw new UserIDNotAvailableException();
+//        }
 
         /* Ensure userID is long enough */
         if (userID.length() < 8) {
             throw new IllegalArgumentException();
         } else {
             Patient patient = new Patient(userID, userPhone, userEmail);
-            elasticsearchController.addPatient(decomposer.decompose(patient));
+           // elasticsearchController.addPatient(decomposer.decompose(patient));
         }
     }
 
@@ -78,19 +78,19 @@ public class UserManager {
             throws UserIDNotAvailableException, IllegalArgumentException, NetworkErrorException {
 
         /* Ensure userID is unique */
-        if (elasticsearchController.existsUser(userID)){
-            throw new UserIDNotAvailableException();
-        }
+//        if (elasticsearchController.existsUser(userID)){
+//            throw new UserIDNotAvailableException();
+//        }
 
         /* Ensure userID is long enough */
         if (userID.length() < 8){
             throw new IllegalArgumentException();
         }
 
-        else {
-            Caregiver caregiver = new Caregiver(userID, userPhone, userEmail);
-            elasticsearchController.addCaregiver(decomposer.decompose(caregiver));
-        }
+//        else {
+//            Caregiver caregiver = new Caregiver(userID, userPhone, userEmail);
+//            elasticsearchController.addCaregiver(decomposer.decompose(caregiver));
+//        }
     }
 
     /**
@@ -100,26 +100,26 @@ public class UserManager {
      * @return Returns true on successful login, false if credentials are invalid,
      * user doesn't exist or there is already someone logged in.
      */
-    public boolean login(String userid) throws NetworkErrorException {
-        /* Check for internet connection */
-        if (!elasticsearchController.isConnected()){
-            throw new NetworkErrorException("No internet access!");
-        }
-
-        /* Attempt login */
-        if (userController.getUser() != null){
-            return false;
-        }
-        try {
-            User user = this.fetchUser(userid);
-            userController.loadUser(user);
-            dataManager.saveMe(user);
-            return true;
-
-        } catch (Exception e){
-            return false;
-        }
-    }
+//    public boolean login(String userid) throws NetworkErrorException {
+//        /* Check for internet connection */
+////        if (!elasticsearchController.isConnected()){
+////            throw new NetworkErrorException("No internet access!");
+////        }
+//
+//        /* Attempt login */
+//        if (userController.getUser() != null){
+//            return false;
+//        }
+//        try {
+//            User user = this.fetchUser(userid);
+//            userController.loadUser(user);
+//            dataManager.saveMe(user);
+//            return true;
+//
+//        } catch (Exception e){
+//            return false;
+//        }
+//    }
 
     /**
      * Attempt to login based on local data.
@@ -131,15 +131,15 @@ public class UserManager {
 
             // TODO: solve this race condition
             // As is, cloud based changes will not overwrite the local copy, at all (no additions)
-            if(elasticsearchController.isConnected()){
-                try {
-                    User cloudUser = this.fetchUser(localUser.getUserID());
-
-                } catch (Exception e) {
-                    this.logout();
-                    return false;
-                }
-            }
+//            if(elasticsearchController.isConnected()){
+//                try {
+//                    User cloudUser = this.fetchUser(localUser.getUserID());
+//
+//                } catch (Exception e) {
+//                    this.logout();
+//                    return false;
+//                }
+//            }
             dataManager.saveMe(localUser);
             userController.loadUser(localUser);
             return true;
@@ -162,21 +162,8 @@ public class UserManager {
      * @return A patient or caregiver object built from the userID.    * @throws NoSuchUserException Thrown if there is no user with the given userID in the database.
      * @throws NetworkErrorException Thrown if app is unable to reach Elasticsearch server.
      */
-    public User fetchUser (String userID) throws Exception, NetworkErrorException {
+    public void fetchUser (String userID)   {
 
-        /* Check if userID corresponds with a patient */
-        if (elasticsearchController.existsPatient(userID)){
-            return decomposer.compose(elasticsearchController.getPatientDecomposition(userID));
-        }
-
-        /* Check if userID corresponds with a caregiver */
-        else if (elasticsearchController.existsCaregiver(userID)){
-            return decomposer.compose(elasticsearchController.getCaregiverDecomposition(userID));
-        }
-
-        else {
-            throw new Exception("User does not exist");
-        }
     }
 
     /**
@@ -185,59 +172,59 @@ public class UserManager {
      *
      * @param user The user object to be synced into the database.
      */
-    public void saveUser(User user) {
-        if (userController.getUser() != null) {
-            if (user.getUserID().equals(userController.getUser().getUserID())) {
-                dataManager.saveMe(user);
-            }
-        }
-        dataManager.addToQueue(user);
-
-        // TODO: this should also be triggered whenever there is an internet connection
-        if (elasticsearchController.isConnected()){
-            ArrayList<User> toupload = (ArrayList<User>) dataManager.getPushQueue().clone();
-            for (User user1 : toupload){
-
-                UserDecomposer.Decomposition userDecomp;
-                try {
-                    userDecomp = decomposer.decompose(user1);
-                    if (user1.getClass() == Patient.class) {
-                        if (elasticsearchController.pushPatient(userDecomp)) {
-                            dataManager.removeFromQueue(user1);
-                        }
-                    }
-                    else {
-                        if (elasticsearchController.pushCaregiver(userDecomp)) {
-                            dataManager.removeFromQueue(user1);
-                        }
-                    }
-
-                } catch (NetworkErrorException e) {
-                    break;
-                }
-            }
-        }
-    }
+//    public void saveUser(User user) {
+//        if (userController.getUser() != null) {
+//            if (user.getUserID().equals(userController.getUser().getUserID())) {
+//                dataManager.saveMe(user);
+//            }
+//        }
+//        dataManager.addToQueue(user);
+//
+//        // TODO: this should also be triggered whenever there is an internet connection
+//        if (elasticsearchController.isConnected()){
+//            ArrayList<User> toupload = (ArrayList<User>) dataManager.getPushQueue().clone();
+//            for (User user1 : toupload){
+//
+//                UserDecomposer.Decomposition userDecomp;
+//                try {
+//                    userDecomp = decomposer.decompose(user1);
+//                    if (user1.getClass() == Patient.class) {
+//                        if (elasticsearchController.pushPatient(userDecomp)) {
+//                            dataManager.removeFromQueue(user1);
+//                        }
+//                    }
+//                    else {
+//                        if (elasticsearchController.pushCaregiver(userDecomp)) {
+//                            dataManager.removeFromQueue(user1);
+//                        }
+//                    }
+//
+//                } catch (NetworkErrorException e) {
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Delete all data belonging to the user associated with the given userID from the database.
      * Does not delete patients of caregiver when caregiver is deleted.
      * @param userID The userID of the user to be cleared out.
      */
-    public void deleteUser(String userID) throws Exception, NetworkErrorException {
-        if (elasticsearchController.existsPatient(userID)) {
-            /* Replace patient with empty patient
-             * Effectively deletes all problems, records and photos
-             */
-            Patient patient = new Patient(userID, "", "");
-            userManager.saveUser(patient);
-        } else if (!elasticsearchController.existsCaregiver(userID)) {
-            throw new Exception();
-        }
-
-        /* Delete what remains of the user */
-        elasticsearchController.deleteUser(userID);
-    }
+//    public void deleteUser(String userID) throws Exception, NetworkErrorException {
+//        if (elasticsearchController.existsPatient(userID)) {
+//            /* Replace patient with empty patient
+//             * Effectively deletes all problems, records and photos
+//             */
+//            Patient patient = new Patient(userID, "", "");
+//            userManager.saveUser(patient);
+//        } else if (!elasticsearchController.existsCaregiver(userID)) {
+//            throw new Exception();
+//        }
+//
+//        /* Delete what remains of the user */
+//        elasticsearchController.deleteUser(userID);
+//    }
 
 
 

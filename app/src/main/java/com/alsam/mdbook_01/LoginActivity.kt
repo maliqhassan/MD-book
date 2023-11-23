@@ -47,6 +47,25 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter User ID", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+        val userId: String? = sharedPreferences.getString("USER_ID", "")
+
+        if (!userId.isNullOrEmpty()) {
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("USER_ID", userId)
+            startActivity(intent)
+            finish()
+            // The userId is not empty or null
+            // Your code here
+        } else {
+            // The userId is either empty or null
+            // Handle the case where the userId is not available
+        }
+
+        userID = sharedPreferences.getString("USER_ID", null) ?: ""
     }
 
     private fun checkIfCaregiver(userID: String) {

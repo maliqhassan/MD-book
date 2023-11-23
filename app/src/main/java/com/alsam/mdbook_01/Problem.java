@@ -124,11 +124,11 @@ class Problem implements Serializable {
      * does not keep running list in Problem object.
      * @return ArrayList of all photos of all associated records.
      */
-    public ArrayList<Photo> getPhotos() {
-        ArrayList<Photo> photos = new ArrayList<>();
-        for (Record record : this.records){
-            photos.addAll(record.getPhotos());
-        }
+    public String getPhotos() {
+       String photos = "";
+//        for (Record record : this.records){
+//            photos.addAll(record.getPhotos());
+//        }
 
         return photos;
     }

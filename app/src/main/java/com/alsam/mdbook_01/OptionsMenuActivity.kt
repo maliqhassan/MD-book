@@ -27,7 +27,7 @@ class OptionsMenuActivity : AppCompatActivity() {
         }
 
         geoLocationButton.setOnClickListener {
-            val intent = Intent(this@OptionsMenuActivity, MapsActivity::class.java)
+            val intent = Intent(this@OptionsMenuActivity, MapActivity::class.java)
             startActivity(intent)
         }
 
