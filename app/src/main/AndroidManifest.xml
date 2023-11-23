@@ -4,9 +4,10 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
 
     <application
         android:allowBackup="true"
@@ -18,8 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MDBook_01"
         tools:targetApi="31">
-
-        <activity android:name=".MapsActivity"/>
+        <activity
+            android:name=".EditProblem"
+            android:exported="false" />
+        <activity android:name=".MapsActivity" />
         <activity android:name=".AddProblemActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".RegisterActivity" />
@@ -28,13 +31,11 @@
         <activity android:name=".AddCommentActivity" />
         <activity android:name=".AddReminderActivity" />
         <activity android:name=".ChooseUploadActivity" />
-        <activity android:name=".ItemRecord"/>
-        <activity android:name=".OptionsMenuActivity"/>
-        <activity android:name=".ActivityListProblem"/>
-        <activity android:name=".PatientProblemList"/>
-        <activity android:name=".PatientProblemRecord"/>
-        <activity android:name=".GenerateQRActivity"/>
-
+        <activity android:name=".ItemRecord" />
+        <activity android:name=".OptionMenuActivity" />
+        <activity android:name=".PatientProblemList" />
+        <activity android:name=".PatientProblemRecord" />
+        <activity android:name=".GenerateQRActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -42,16 +43,28 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/apikey" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".AlarmService" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.alsam.mdbook_01.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

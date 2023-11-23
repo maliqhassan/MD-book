@@ -11,6 +11,7 @@ class OptionsMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_option_menu) // Replace with your layout name
 
+
         val editProblemButton: Button = findViewById(R.id.EditProblem)
         val editRecordButton: Button = findViewById(R.id.EditRecord)
         val geoLocationButton: Button = findViewById(R.id.GeoLocation)

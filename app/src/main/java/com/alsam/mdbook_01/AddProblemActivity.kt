@@ -1,7 +1,9 @@
 package com.alsam.mdbook_01
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -12,13 +14,17 @@ import java.util.Calendar
 
 class AddProblemActivity : AppCompatActivity() {
 
-    private val db = FirebaseFirestore.getInstance()
+     private val db = FirebaseFirestore.getInstance()
     private val collectionReference = db.collection("problems")
 
     private lateinit var addTitleEditText: EditText
     private lateinit var addDescriptionEditText: EditText
+    private lateinit var userID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        userID = sharedPreferences.getString("USER_ID", null) ?: ""
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_problem)
 
@@ -62,7 +68,7 @@ class AddProblemActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showDatePicker(title: String, description: String) {
+    public fun showDatePicker(title: String, description: String) {
         val calendar = Calendar.getInstance()
         val datePicker = DatePickerDialog(
             this,
@@ -73,7 +79,8 @@ class AddProblemActivity : AppCompatActivity() {
                 val problemData = hashMapOf(
                     "title" to title,
                     "description" to description,
-                    "date" to selectedDate
+                    "date" to selectedDate,
+                    "userid" to userID
                 )
 
                 // Add data to Firestore collection

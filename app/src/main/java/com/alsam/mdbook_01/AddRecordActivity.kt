@@ -17,11 +17,15 @@ class AddRecordActivity : AppCompatActivity() {
     private lateinit var descriptionEditText: EditText
     private val db = FirebaseFirestore.getInstance()
     private val recordsCollection = db.collection("records")
-
+    var id=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_record)
 
+        val intent = intent
+
+        // Retrieve data from the intent
+        id = intent.getStringExtra("id").toString()
         headlineEditText = findViewById(R.id.headline)
         descriptionEditText = findViewById(R.id.description)
 
@@ -37,11 +41,13 @@ class AddRecordActivity : AppCompatActivity() {
 
         geoButton.setOnClickListener {
             val intent = Intent(this@AddRecordActivity, MapsActivity::class.java)
+            intent.putExtra("id", id)
             startActivity(intent)
         }
 
         bodyButton.setOnClickListener {
             val intent = Intent(this@AddRecordActivity, NewBodyLocationView::class.java)
+            intent.putExtra("id", id)
             startActivity(intent)
         }
 
@@ -52,7 +58,8 @@ class AddRecordActivity : AppCompatActivity() {
             if (headline.isNotEmpty() && description.isNotEmpty()) {
                 val recordData = hashMapOf(
                     "headline" to headline,
-                    "description" to description
+                    "description" to description,
+                     "id" to id
                 )
 
                 recordsCollection.add(recordData)

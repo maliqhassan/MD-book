@@ -16,10 +16,14 @@ class NewBodyLocationView : AppCompatActivity() {
     private lateinit var bodyPartEditText: EditText
     private lateinit var labelEditText: EditText
 
+var id =""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_body_location_view)
+        val intent = intent
 
+        // Retrieve data from the intent
+        id = intent.getStringExtra("id").toString()
         bodyFrontImageView = findViewById(R.id.body_front)
         bodyBackImageView = findViewById(R.id.body_back)
         doneButton = findViewById(R.id.done)
@@ -29,11 +33,18 @@ class NewBodyLocationView : AppCompatActivity() {
 
         bodyFrontImageView.setOnClickListener {
             val intent = Intent(this@NewBodyLocationView, ChooseUploadActivity::class.java)
+            intent.putExtra("id", id)
+            intent.putExtra("front","1")
+            intent.putExtra("back","0")
+
             startActivity(intent)
         }
 
         bodyBackImageView.setOnClickListener {
             val intent = Intent(this@NewBodyLocationView, ChooseUploadActivity::class.java)
+            intent.putExtra("id", id)
+            intent.putExtra("front","0")
+            intent.putExtra("back","1")
             startActivity(intent)
         }
 

@@ -26,11 +26,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var addLocationImageView: ImageView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST = 1
-
+    var id=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
+        val intent = intent
+
+        // Retrieve data from the intent
+        id = intent.getStringExtra("id").toString()
         searchEditText = findViewById(R.id.input_search)
         magnifyImageView = findViewById(R.id.ic_magnify)
         gpsCenterImageView = findViewById(R.id.gpscenter)

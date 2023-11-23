@@ -1,6 +1,6 @@
 package com.alsam.mdbook_01
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var userID: String // Variable to hold the userID
+    private lateinit var userID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +21,19 @@ class LoginActivity : AppCompatActivity() {
 
         val etUserID = findViewById<EditText>(R.id.etUserID)
         val loginButton = findViewById<Button>(R.id.loginButton)
-        val registerBtn = findViewById<Button>(R.id.registerBtn)
-        val scanQRBtn = findViewById<Button>(R.id.scanQRBtn)
+        val registerButton  = findViewById<Button>(R.id.registerBtn)
 
-        checkIfUserIsLoggedIn()
+
+        registerButton.setOnClickListener{
+            val intent = Intent(this, RegisterActivity::class.java)
+
+            // Optionally, you can add extra data to the intent
+            intent.putExtra("key", "value")
+
+            // Start the activity
+            startActivity(intent)
+
+        }
 
         loginButton.setOnClickListener {
             userID = etUserID.text.toString().trim()
@@ -32,29 +41,36 @@ class LoginActivity : AppCompatActivity() {
                 // Store userID in SharedPreferences
                 saveUserIDToSharedPreferences(userID)
 
-                checkDatabaseForUserID(userID)
+                // Check if the user is a caregiver (isChecked)
+                checkIfCaregiver(userID)
             } else {
                 Toast.makeText(this, "Please enter User ID", Toast.LENGTH_SHORT).show()
             }
         }
-
-        registerBtn.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-        }
-
-        scanQRBtn.setOnClickListener {
-            openCameraForScan()
-        }
     }
-    private fun checkIfUserIsLoggedIn() {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val userID: String? = sharedPreferences.getString("USER_ID", null)
 
-        if (!userID.isNullOrEmpty()) {
-            // User is already logged in, check database and redirect accordingly
-            checkDatabaseForUserID(userID)
-        }
-        // If userID does not exist in shared preferences, the user is not logged in and stays on LoginActivity
+    private fun checkIfCaregiver(userID: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val isChecked = documentSnapshot.getBoolean("isChecked") ?: false
+
+                    if (isChecked) {
+                        // If the user is a caregiver, open the QR code scanner
+                        openCameraForScan()
+                    } else {
+                        // If not a caregiver, redirect to the desired activity (MainActivity, PatientProblemList, etc.)
+                        redirectToAppropriateActivity(userID)
+                    }
+                } else {
+                    Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun openCameraForScan() {
@@ -71,45 +87,57 @@ class LoginActivity : AppCompatActivity() {
         if (result != null) {
             if (result.contents != null) {
                 val scannedData: String = result.contents // Retrieve the scanned data
-                // Handle the scanned QR code data as needed
-                Toast.makeText(this, "Scanned data: $scannedData", Toast.LENGTH_SHORT).show()
+
+                // Check if scannedData matches a user ID in the database
+                verifyScannedUserID(scannedData)
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    private fun checkDatabaseForUserID(userID: String) {
+    private fun verifyScannedUserID(scannedData: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userID)
+        db.collection("users").document(scannedData)
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    val isChecked = documentSnapshot.getBoolean("isChecked") ?: false
-                    if (isChecked) {
-                        startActivity(Intent(this, PatientProblemList::class.java))
-                    } else {
-                        startActivity(Intent(this, MainActivity::class.java))
-                    }
-                    // Always pass the userID to GenerateQRActivity
+                    redirectToPatientProblemList(scannedData)
                 } else {
                     Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+                    // Redirect to the appropriate activity as needed if the user ID is not found
+                    redirectToAppropriateActivity(userID)
                 }
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                // Redirect to the appropriate activity in case of an error
+                redirectToAppropriateActivity(userID)
             }
     }
 
+    private fun redirectToPatientProblemList(userID: String) {
+        // Redirect to PatientProblemList activity with the verified userID
+        val intent = Intent(this, PatientProblemList::class.java)
+        intent.putExtra("USER_ID", userID)
+        startActivity(intent)
+        finish() // Finish LoginActivity to prevent returning back here on back press
+    }
+
+    private fun redirectToAppropriateActivity(userID: String) {
+        // Here, determine which activity to open based on your logic
+        // For example, opening MainActivity or PatientProblemList
+        // You can use the Intent to pass the userID if needed
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("USER_ID", userID)
+        startActivity(intent)
+        finish() // Finish LoginActivity to prevent returning back here on back press
+    }
+
     private fun saveUserIDToSharedPreferences(userID: String) {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString("USER_ID", userID)
         editor.apply()
-    }
-
-    private fun getUserIDFromSharedPreferences(): String? {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("USER_ID", null)
     }
 }
