@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -80,6 +81,7 @@ public class AddRecordActivity extends AppCompatActivity {
     private ArrayList<BodyLocation> bodylocationlist = new ArrayList<BodyLocation>();
     String id ;
 
+    String headlineS,description,imageS,frontPic,backPic,lat,lng;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +99,67 @@ public class AddRecordActivity extends AppCompatActivity {
         Intent intent = getIntent();
        id = intent.getStringExtra("id");
 
-        createDocument(id);
-image.setOnClickListener(new View.OnClickListener() {
+
+
+        headlineS=   intent.getStringExtra("headline" );
+        description=   intent.getStringExtra("description");
+        imageS=  intent.getStringExtra("image");
+        frontPic=   intent.getStringExtra("frontPic");
+        backPic=intent.getStringExtra("backPic");
+        lat= intent.getStringExtra("lat");
+        lng =intent.getStringExtra("lng");
+
+if(headlineS!=null && headlineS.length()>0)
+{
+
+    headline.setText(headlineS);
+
+}
+else{
+
+    createDocument(id);
+}
+if(description!=null && description.length()>0)
+{
+
+    Description.setText(description);
+}
+        if(imageS!=null && imageS.length()>0) {
+
+
+            Glide.with(this)
+                    .load(imageS)
+                    // image url
+                    // any placeholder to load at start
+                    // any image in case of error
+                    // resizing
+
+
+                    .centerCrop()
+
+                    .into(image);
+
+        }
+            if (frontPic != null && frontPic.length() > 0) {
+
+
+            }
+
+            if (backPic != null && backPic.length() > 0) {
+
+            }
+
+            if (lat != null && lat.length() > 0) {
+
+            }
+
+            if (lng != null && lng.length() > 0) {
+
+            }
+
+
+
+        image.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
 
@@ -353,6 +414,11 @@ image.setOnClickListener(new View.OnClickListener() {
      */
     public void goAddBodyLoc(){
         Intent addRecordPage = new Intent(this, NewBodyLocationView.class);
+        addRecordPage.putExtra("frontPic",frontPic);
+        addRecordPage.putExtra("backPic",backPic);
+        addRecordPage.putExtra("id",id);
+
+
         startActivityForResult(addRecordPage, BODY_ACTIVITY_REQUEST_CODE);
 
     }

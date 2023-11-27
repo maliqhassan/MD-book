@@ -16,7 +16,44 @@ class Record implements Serializable, Comparable {
     private String photos;
     private String comment;
     private String recordID = "-1";
+    private  String frontPic;
+    private  String backPic;
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public GeoLocation getGeoLocation() {
+        return geoLocation;
+    }
+
+    public ArrayList<BodyLocation> getBodyLocations() {
+        return bodyLocations;
+    }
+
+    public void setBodyLocations(ArrayList<BodyLocation> bodyLocations) {
+        this.bodyLocations = bodyLocations;
+    }
+
+    public void setPhotos(String photos) {
+        this.photos = photos;
+    }
+
+    public String getFrontPic() {
+        return frontPic;
+    }
+
+    public void setFrontPic(String frontPic) {
+        this.frontPic = frontPic;
+    }
+
+    public String getBackPic() {
+        return backPic;
+    }
+
+    public void setBackPic(String backPic) {
+        this.backPic = backPic;
+    }
 
     /**
      * Generates a new Record object with date and title.

@@ -29,6 +29,9 @@ class ChooseUploadActivity : AppCompatActivity() {
     var back =""
     var front =""
     var  id ="";
+
+    var backUrl ="";
+    var frontUrl ="";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_choose_upload)
@@ -39,8 +42,13 @@ class ChooseUploadActivity : AppCompatActivity() {
         // Retrieve data from the intent
         id = intent.getStringExtra("id").toString()
 
+
         back =  intent.getStringExtra( "back").toString();
         front =  intent.getStringExtra( "front").toString();
+        backUrl = intent.getStringExtra("backPic").toString();
+        frontUrl = intent.getStringExtra("frontPic").toString();
+
+
 
         val openGalleryButton: Button = findViewById(R.id.openGallery)
         val openCameraButton: Button = findViewById(R.id.openCamera)
@@ -89,7 +97,7 @@ class ChooseUploadActivity : AppCompatActivity() {
                             )
                             // Save the photo URI or use it as needed
                             uploadUriToFirestoreStorage( photoURI)
-                            finish()
+                          //  finish()
                         }
                     }
                 }
@@ -99,7 +107,7 @@ class ChooseUploadActivity : AppCompatActivity() {
                     if (selectedImageUri != null) {
                         // Use the selectedImageUri as needed
                         uploadUriToFirestoreStorage(selectedImageUri)
-                        finish()
+                       // finish()
                     }
                 }
             }
@@ -154,7 +162,11 @@ fun uploadUriToFirestoreStorage(imageUri: Uri) {
     progressDialog = ProgressDialog(this)
     progressDialog.setMessage("Loading...")
     progressDialog.setCancelable(false)
-    progressDialog.show()
+    try {
+        progressDialog.show()
+    } finally {
+
+    }
 
     val storage = FirebaseStorage.getInstance()
     val storageRef: StorageReference = storage.reference
@@ -186,74 +198,135 @@ fun uploadUriToFirestoreStorage(imageUri: Uri) {
     private lateinit var progressDialog: ProgressDialog
     private val db = FirebaseFirestore.getInstance()
     private fun saveUrl(downloadUrl: String) {
-
-
         val collectionRef = db.collection("problems")
-
-        // Reference to the specific document
         val documentRef = collectionRef.document(id)
-        if(front.equals("1"))
-        {
+
+        if (front.equals("1")) {
             val updates = hashMapOf<String, Any>(
                 "front_url" to downloadUrl
-                // Add any other fields you want to update here
             )
 
-            // Update the document
             documentRef.update(updates)
                 .addOnSuccessListener {
                     progressDialog.cancel()
-                    finish();
-                    // Document updated successfully
-                    // You can perform additional actions here if needed
+                    navigateToNextActivity(downloadUrl)
                 }
                 .addOnFailureListener { e ->
                     progressDialog.cancel()
                     // Handle failures
-                    // Log the error or perform any other actions
+                    Log.e("FirestoreStorage", "Error updating document", e)
                 }
-
-
-
-
-        }
-        else{
-
-
+        } else {
             val updates = hashMapOf<String, Any>(
                 "back_url" to downloadUrl
-                // Add any other fields you want to update here
             )
-
-            // Update the document
-
 
             documentRef.update(updates)
                 .addOnSuccessListener {
                     progressDialog.cancel()
-                    finish();
-                    // Document updated successfully
-                    // You can perform additional actions here if needed
+                    navigateToNextActivity(downloadUrl)
                 }
                 .addOnFailureListener { e ->
                     progressDialog.cancel()
                     // Handle failures
-                    // Log the error or perform any other actions
+                    Log.e("FirestoreStorage", "Error updating document", e)
                 }
         }
-
-
-
-
-
-            // Reference to the collection
-
-
-            // Create a map to update the document
-
-
-
-
     }
+
+    private fun navigateToNextActivity(downloadUrl: String) {
+        val intent = Intent(this, NewBodyLocationView::class.java)
+        intent.putExtra("backPic", if (front.equals("1")) backUrl else downloadUrl)
+        intent.putExtra("frontPic", if (front.equals("1")) downloadUrl else frontUrl)
+        intent.putExtra("id", id)
+        startActivity(intent)
+        finish()
+    }
+
+//    private fun saveUrl(downloadUrl: String) {
+//
+//
+//        val collectionRef = db.collection("problems")
+//
+//        // Reference to the specific document
+//        val documentRef = collectionRef.document(id)
+//        if(front.equals("1"))
+//        {
+//            val updates = hashMapOf<String, Any>(
+//                "front_url" to downloadUrl
+//                // Add any other fields you want to update here
+//            )
+//
+//            // Update the document
+//            documentRef.update(updates)
+//                .addOnSuccessListener {
+//                    progressDialog.cancel()
+//                    val intent = Intent(this, NewBodyLocationView::class.java)
+//                    intent.putExtra("backPic",backUrl )
+//                    intent.putExtra("frontUrl",downloadUrl)
+//                    intent.putExtra("id",id)
+//                    startActivity(intent)
+//                    finish();
+//                    // Document updated successfully
+//                    // You can perform additional actions here if needed
+//                }
+//                .addOnFailureListener { e ->
+//                    progressDialog.cancel()
+//                    // Handle failures
+//                    // Log the error or perform any other actions
+//                }
+//
+//
+//
+//
+//        }
+//        else{
+//
+//
+//            val updates = hashMapOf<String, Any>(
+//                "back_url" to downloadUrl
+//                // Add any other fields you want to update here
+//            )
+//
+//            // Update the document
+//
+//
+//            documentRef.update(updates)
+//                .addOnSuccessListener {
+//                    progressDialog.cancel()
+//
+//                    val intent = Intent(this, NewBodyLocationView::class.java)
+//
+//                    // Optionally, you can add extra data to the intent
+//                    intent.putExtra("backPic",downloadUrl )
+//                    intent.putExtra("frontUrl",frontUrl)
+//                    intent.putExtra("id",id)
+//
+//
+//                    startActivity(intent)
+//                    finish();
+//                    // Document updated successfully
+//                    // You can perform additional actions here if needed
+//                }
+//                .addOnFailureListener { e ->
+//                    progressDialog.cancel()
+//                    // Handle failures
+//                    // Log the error or perform any other actions
+//                }
+//        }
+//
+//
+//
+//
+//
+//            // Reference to the collection
+//
+//
+//            // Create a map to update the document
+//
+//
+//
+//
+//    }
 
 }

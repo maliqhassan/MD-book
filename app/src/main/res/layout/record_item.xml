@@ -27,7 +27,7 @@
             android:layout_toRightOf="@id/recordImage"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="25dp"
-            android:textSize="30dp"/>
+            android:textSize="20dp"/>
 
         <!-- TextView for the record date -->
         <TextView
@@ -50,7 +50,7 @@
             android:layout_toRightOf="@id/recordImage"
             android:scrollbars="vertical"
             android:text="Description"
-            android:textSize="15sp" />
+            android:textSize="15dp" />
 
         <!-- ImageButton to add comments -->
         <ImageButton
@@ -59,8 +59,9 @@
             android:layout_height="48dp"
             android:contentDescription="1"
             android:layout_below="@id/recordDate"
+
             android:layout_alignParentRight="true"
-            android:layout_marginTop="15sp"
+            android:layout_marginTop="45dp"
             android:layout_marginRight="15sp"
             android:background="#00FFFFFF"
             android:src="@drawable/ic_circle_add_button" />
@@ -71,10 +72,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/recordImage"
+            android:layout_marginBottom="10dp"
             android:contentDescription="1"
+
             android:layout_toLeftOf="@id/recordComments"
             android:background="@drawable/buttontemplate"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="25dp"
             android:src="@drawable/ic_location" />
     </RelativeLayout>

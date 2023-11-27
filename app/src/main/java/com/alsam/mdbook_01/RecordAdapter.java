@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordViewholder> {
@@ -64,7 +66,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
                     if (listener != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
-                            listener.onItemClick(position);
+                         //   listener.onItemClick(position);
                         }
                     }
                 }
@@ -76,7 +78,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
                     if (listener != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
-                            listener.viewmapClick(position);
+                           // listener.viewmapClick(position);
                         }
                     }
                 }
@@ -90,9 +92,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
      * @param recordList: needs list of all records by the user currently signed
      * @param activity: needs the current activity to implement RecordAdapter
      */
-    public RecordAdapter(ArrayList<Record> recordList, Activity activity){
+    public RecordAdapter(ArrayList<Record> recordList, Activity activity,onItemClickListener listener){
         mrecordList = recordList;
         mActivity = activity;
+        this.mListener = listener;
     }
 
 
@@ -123,7 +126,17 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         //recordViewholder.mImageView.setImageResource(currentRecord.getPhotos().get(0).getPhotoid());
         recordViewholder.mTitle.setText(currentRecord.getTitle());
         recordViewholder.mDate.setText(currentRecord.getDate().toString());
-        recordViewholder.mComment.setText(currentRecord.getComment());
+        recordViewholder.mComment.setText(currentRecord.getDescription());
+
+
+
+        Glide.with(mActivity)
+                .load(currentRecord.getPhotos()) // image url
+                .placeholder(R.drawable.placeholder) // any placeholder to load at start
+                .error(R.drawable.imagenotfound)  // any image in case of error
+                .override(200, 200) // resizing
+                .centerCrop()
+                .into(recordViewholder.mImageView);
     }
 
 

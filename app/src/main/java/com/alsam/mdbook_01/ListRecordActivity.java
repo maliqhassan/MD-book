@@ -86,14 +86,46 @@ public class ListRecordActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recordRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new RecordAdapter(recordList,ListRecordActivity.this);
+        mAdapter = new RecordAdapter(recordList, ListRecordActivity.this, new RecordAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
+                addRecord.putExtra("id", id);
+                addRecord.putExtra("headline",recordList.get(position).getTitle());
+                addRecord.putExtra("description",recordList.get(position).getDescription());
+                addRecord.putExtra("image",recordList.get(position).getPhotos());
+                addRecord.putExtra("frontPic",recordList.get(position).getFrontPic());
+                addRecord.putExtra("backPic",recordList.get(position).getBackPic());
+                addRecord.putExtra("lat",recordList.get(position).getGeoLocation().getLat());
+                addRecord.putExtra("lng",recordList.get(position).getGeoLocation().getLong());
+                startActivity(addRecord);
+
+            }
+
+            @Override
+            public void viewmapClick(int postion) {
+
+            }
+        });
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+
 
         mAdapter.setOnItemClickListener(new RecordAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 recordList.get(position);
+                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
+                 addRecord.putExtra("id", id);
+                 addRecord.putExtra("headline",recordList.get(position).getTitle());
+                 addRecord.putExtra("description",recordList.get(position).getDescription());
+                 addRecord.putExtra("image",recordList.get(position).getPhotos());
+                 addRecord.putExtra("frontPic",recordList.get(position).getFrontPic());
+                addRecord.putExtra("backPic",recordList.get(position).getBackPic());
+                addRecord.putExtra("lat",recordList.get(position).getGeoLocation().getLat());
+                addRecord.putExtra("lng",recordList.get(position).getGeoLocation().getLong());
+                startActivity(addRecord);
+
                 //Toast.makeText(ListRecordActivity.this, "works",Toast.LENGTH_SHORT).show();
             }
 
@@ -124,6 +156,7 @@ public class ListRecordActivity extends AppCompatActivity {
                 AddRecord();
             }
         });
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -217,10 +250,44 @@ public class ListRecordActivity extends AppCompatActivity {
                             Record cardItem = new Record(title,"",description,photos) ;
 
 
-                            recordList.add(cardItem);
+                            if(title!=null && description!=null)
+                            {         recordList.add(cardItem);
+
+
+                            }
+
                         }
 
-                        mAdapter = new RecordAdapter(recordList,ListRecordActivity.this);
+                        mAdapter = new RecordAdapter(recordList, ListRecordActivity.this, new RecordAdapter.onItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+
+                                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
+                                addRecord.putExtra("id", id);
+                                addRecord.putExtra("headline",recordList.get(position).getTitle());
+                                addRecord.putExtra("description",recordList.get(position).getDescription());
+                                addRecord.putExtra("image",recordList.get(position).getPhotos());
+                                addRecord.putExtra("frontPic",recordList.get(position).getFrontPic());
+                                addRecord.putExtra("backPic",recordList.get(position).getBackPic());
+                                try {
+                                    addRecord.putExtra("lat",recordList.get(position).getGeoLocation().getLat());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    addRecord.putExtra("lng",recordList.get(position).getGeoLocation().getLong());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                startActivity(addRecord);
+
+                            }
+
+                            @Override
+                            public void viewmapClick(int postion) {
+
+                            }
+                        });
 
                         mRecyclerView.setAdapter(mAdapter);
                     }
