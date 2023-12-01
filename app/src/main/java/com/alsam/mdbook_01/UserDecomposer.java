@@ -242,7 +242,8 @@ public class UserDecomposer {
                         String recordDescription = recordJSON.getString("description");
                         String comment = recordJSON.getString("comment");
 
-                        Record record = new Record(recordTitle,String.valueOf( recordDate), recordDescription,"");
+                        GeoLocation geoLocations = null;
+                        Record record = new Record(recordTitle,String.valueOf( recordDate),"", recordDescription,geoLocations);
 
                         record.setComment(comment);
                         record.setRecordID(recordID);

@@ -66,7 +66,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
                     if (listener != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
-                         //   listener.onItemClick(position);
+                           listener.onItemClick(position);
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
                     if (listener != null){
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION){
-                           // listener.viewmapClick(position);
+                            listener.viewmapClick(position);
                         }
                     }
                 }

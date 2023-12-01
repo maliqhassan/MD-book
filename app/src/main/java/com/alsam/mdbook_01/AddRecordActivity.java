@@ -119,6 +119,7 @@ else{
 
     createDocument(id);
 }
+
 if(description!=null && description.length()>0)
 {
 
@@ -282,6 +283,31 @@ if(description!=null && description.length()>0)
 
 
                      }
+                     else{
+
+                         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+// Create a new document without specifying a document ID
+                         DocumentReference collectionRef = db.collection("records").document(documentId);
+
+// Create a data object with the field "userid" set to "3"
+                         Map<String, Object> data = new HashMap<>();
+                         data.put("image", "");
+                         data.put("headline",hd);
+                         data.put("title",hs);
+
+// Add the data to a new document with an automatically generated ID
+                         collectionRef.update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                             @Override
+                             public void onSuccess(Void unused) {
+
+                                 finish();
+                             }
+                         });
+
+
+
+                     }
 
 //                    recordDate = new Date();
 //                    if (record == null) {
@@ -314,7 +340,7 @@ if(description!=null && description.length()>0)
 //                        ,"Record " + headline.getText().toString() + " Added"
 //                        ,Toast.LENGTH_SHORT).show();
 //                    setResult(RESULT_OK);
-                    finish();
+
                 }catch (NullPointerException e){
                     Toast.makeText(AddRecordActivity.this, "No Title Entered",
                         Toast.LENGTH_SHORT).show();
@@ -434,8 +460,13 @@ if(description!=null && description.length()>0)
      */
     public void openGeoLoc(){
         Intent launchmap= new Intent(this, MapActivity.class);
+        launchmap.putExtra("id",documentId);
         startActivityForResult(launchmap, MAP_ACTIVITY_REQUEST_CODE);
     }
+
+
+
+
 
 
     /**
@@ -468,6 +499,7 @@ if(description!=null && description.length()>0)
     // Function to open the gallery
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.putExtra("id",id);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 

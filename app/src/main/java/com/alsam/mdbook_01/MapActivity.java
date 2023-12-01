@@ -98,7 +98,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void loadLocation() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query query = db.collection("locations").whereEqualTo("problemId", id);
+        Query query = db.collection("locations").whereEqualTo("recordID", id);
 
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -108,7 +108,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     for (QueryDocumentSnapshot document : querySnapshot) {
                         String latitude = document.getString("latitude");
                         String longitude = document.getString("longitude");
-                        String title = document.getString("title");
+                        String title = document.getString("titleL");
 
                         double targetLatitude = Double.parseDouble(latitude);
                         double targetLongitude = Double.parseDouble(longitude);
@@ -288,7 +288,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        finish();
+
+        showAlertDialog();
+
+       /// finish();
     }
 
     public void showAlertDialog() {
@@ -307,6 +310,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Handle "No" button click
+                dialog.dismiss();
+                finish();
             }
         });
         alert.create().show();
@@ -321,11 +326,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         Map<String, Object> data = new HashMap<>();
         data.put("latitude", Lat);
         data.put("longitude", Long);
-        data.put("title", Title);
-        data.put("problemId", id);
 
-        db.collection("locations")
-                .add(data)
+        data.put("titleK", Title);
+      //  data.put("problemId", id);
+
+        db.collection("records")  // Use the correct collection name
+                .document(id)          // Provide a valid document ID here
+                .update(data)
                 .addOnSuccessListener(documentReference -> {
                     finish();
                 })

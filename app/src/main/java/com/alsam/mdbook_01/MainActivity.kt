@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var userID: String
+    private lateinit var userType: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,11 +130,24 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userID = sharedPreferences.getString("USER_ID", null) ?: ""
+        userType = sharedPreferences.getString("userType", null) ?: ""
+
 
         if (userID.isEmpty()) {
             redirectToLogin()
         } else {
-            LoadData(userID)
+            if(userType.equals("caregiver"))
+            {
+                val intent = Intent(this@MainActivity, ListPatientActivity::class.java)
+
+                startActivity(intent)
+                finish()
+
+            }
+            else{
+                LoadData(userID)
+            }
+
         }
     }
 
@@ -164,4 +178,5 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }

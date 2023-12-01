@@ -69,7 +69,10 @@ class ChooseUploadActivity : AppCompatActivity() {
 
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: Exception) {
+        }
     }
 
 

@@ -77,6 +77,13 @@ class LoginActivity : AppCompatActivity() {
                     val isChecked = documentSnapshot.getBoolean("isChecked") ?: false
 
                     if (isChecked) {
+                        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putString( "userType", "caregiver")
+                        editor.putString("USER_ID",userID)
+                        editor.apply()
+
+
                         // If the user is a caregiver, open the QR code scanner
                         openCameraForScan()
                     } else {
@@ -93,12 +100,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openCameraForScan() {
-        val integrator = IntentIntegrator(this)
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
-        integrator.setPrompt("Scan a QR Code")
-        integrator.setCameraId(0) // Use the device's default camera
-        integrator.setOrientationLocked(false) // Unlock orientation (optional)
-        integrator.initiateScan()
+
+
+        val intent = Intent(this, ListPatientActivity::class.java)
+
+        startActivity(intent)
+        finish()
+//        val intent = Intent(this, ListPatientActivity::class.java)
+////        intent.putExtra("USER_ID", userId)
+//        startActivity(intent)
+//        finish()
+
+//        val integrator = IntentIntegrator(this)
+//        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+//        integrator.setPrompt("Scan a QR Code")
+//        integrator.setCameraId(0) // Use the device's default camera
+//        integrator.setOrientationLocked(false) // Unlock orientation (optional)
+//        integrator.initiateScan()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

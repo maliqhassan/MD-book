@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -106,6 +107,10 @@ public class ListRecordActivity extends AppCompatActivity {
             @Override
             public void viewmapClick(int postion) {
 
+               int i = postion;
+
+
+
             }
         });
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -131,7 +136,8 @@ public class ListRecordActivity extends AppCompatActivity {
 
             @Override
             public void viewmapClick(int postion) {
-                if (isServicesOK()) {
+                if (isServicesOK())
+                {
                     Intent launchmap = new Intent(ListRecordActivity.this, ViewMapActivity.class);
                     if (recordList.get(postion).getLocation() != null){
                         launchmap.putExtra("recieveLat",recordList.get(postion).getLocation().getLat());
@@ -237,24 +243,32 @@ public class ListRecordActivity extends AppCompatActivity {
 
                         for (QueryDocumentSnapshot document : result) {
                             String title = document.getString("headline") != null ? document.getString("headline") : "";
-                            String description = document.getString("description") != null ? document.getString("description") : "";
+                            String description = document.getString("title") != null ? document.getString("title") : "";
                             String date = document.getString("date") != null ? document.getString("date") : "";
                             ArrayList<String> bodyLocations = (ArrayList<String>) document.get("bodyLocations");
 
-                            String lat = document.getString("lat") != null ? document.getString("lat") : "";
-                            String lng = document.getString("lng") != null ? document.getString("lng") : "";
+                            String lat = document.getString("latitude") != null ? document.getString("latitude") : "";
+                            String titleK = document.getString("titleK") != null ? document.getString("titleK") : "";
+                            String lng = document.getString("longitude") != null ? document.getString("longitude") : "";
 
                            String  photos = document.getString("image") != null ? document.getString("image") : "";
 
+                            GeoLocation geoLocation =null;
+                           if(lat!=null && lng !=null && lat.length()>0)
+                           {
+                            geoLocation = new GeoLocation(Double.parseDouble(lat),Double.parseDouble(lng),titleK);
+                           }
 
-                            Record cardItem = new Record(title,"",description,photos) ;
+
+                            Record cardItem = new Record(title,"",description,photos,geoLocation) ;
 
 
-                            if(title!=null && description!=null)
+                            if(title!=null && title.length()>0 && description!=null && description.length()>0)
                             {         recordList.add(cardItem);
 
 
                             }
+
 
                         }
 
@@ -279,12 +293,33 @@ public class ListRecordActivity extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+
                                 startActivity(addRecord);
 
                             }
 
                             @Override
                             public void viewmapClick(int postion) {
+                           GeoLocation  geoLocation =     recordList.get(postion).getGeoLocation();
+                                if(geoLocation!=null)
+                                {
+                                    Intent launchmap = new Intent(ListRecordActivity.this, ViewMapActivity.class);
+                                    if (recordList.get(postion).getLocation() != null){
+                                        launchmap.putExtra("recieveLat",String.valueOf(recordList.get(postion).getLocation().getLat()));
+                                        launchmap.putExtra("recieveLong",String.valueOf(recordList.get(postion).getLocation().getLong()));
+                                        launchmap.putExtra("recieveTitle",String.valueOf(recordList.get(postion).getLocation().getTitle()));
+                                        startActivity(launchmap);
+                                    }else {
+                                        Toast.makeText(ListRecordActivity.this, "No location for record",Toast.LENGTH_SHORT).show();
+                                    }
+
+
+                                }
+                                else{
+
+                                    Toast.makeText(ListRecordActivity.this,"No Location Found",Toast.LENGTH_LONG).show();
+                                }
+
 
                             }
                         });

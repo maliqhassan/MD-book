@@ -11,9 +11,19 @@ class Record implements Serializable, Comparable {
     private String title;
     private String date;
     private String description;
+    private  String addressLine;
     private GeoLocation geoLocation;
     private ArrayList<BodyLocation> bodyLocations;
     private String photos;
+
+    public String getAddressLine() {
+        return addressLine;
+    }
+
+    public void setAddressLine(String addressLine) {
+        this.addressLine = addressLine;
+    }
+
     private String comment;
     private String recordID = "-1";
     private  String frontPic;
@@ -88,7 +98,7 @@ class Record implements Serializable, Comparable {
      *                    including anything that might set it apart from previous records
      * @throws IllegalArgumentException if title or description lengths are invalid
      */
-    public Record(String title, String date, String description,String photos) throws IllegalArgumentException {
+    public Record(String title, String date, String description,String photos,GeoLocation geoLocation) throws IllegalArgumentException {
 //        if (title.length() < 1 || title.length() > 30 || description.length() > 300){
 //            throw new IllegalArgumentException();
 //        }
@@ -101,7 +111,7 @@ class Record implements Serializable, Comparable {
 
             this.bodyLocations =  null;
 
-            this.geoLocation = null;
+            this.geoLocation = geoLocation;
 
 
             this.photos = photos;
