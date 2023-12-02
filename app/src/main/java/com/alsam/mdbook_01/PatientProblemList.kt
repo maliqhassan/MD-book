@@ -3,6 +3,8 @@ package com.alsam.mdbook_01
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -26,6 +28,19 @@ class PatientProblemList : AppCompatActivity() {
         recyclerView = findViewById(R.id.cardRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = CardAdapter(ArrayList()) { position ->
+
+         var id =    problemList.get(position).id;
+
+
+
+
+
+
+           // Toast.makeText(this, "This is a short toast message", Toast.LENGTH_SHORT).show()
+
+
+
+
             // Handle card item click here if needed
         }
         recyclerView.adapter = adapter
@@ -53,8 +68,14 @@ class PatientProblemList : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_small_drawer_icon)
         }
 
-        val scannedUserID = "userID_from_scanned_QR_code" // Replace with scanned user ID
-        fetchProblemsForUser(scannedUserID)
+
+        val scannedUserID = intent.getStringExtra("USER_ID")
+
+
+
+        if (scannedUserID != null) {
+            fetchProblemsForUser(scannedUserID)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -66,7 +87,7 @@ class PatientProblemList : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    val problemList = mutableListOf<CardItem>();
     private fun fetchProblemsForUser(userID: String) {
         val db = FirebaseFirestore.getInstance()
         val problemsCollection = db.collection("problems")
@@ -74,7 +95,7 @@ class PatientProblemList : AppCompatActivity() {
 
         query.get()
             .addOnSuccessListener { documents ->
-                val problemList = mutableListOf<CardItem>()
+
 
                 for (document in documents) {
                     val title = document.getString("title") ?: ""
