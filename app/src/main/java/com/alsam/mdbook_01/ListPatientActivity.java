@@ -73,10 +73,27 @@ public class ListPatientActivity extends AppCompatActivity implements Navigation
             public void onClick(int position) {
                 // Handle item click
                 // You can add your logic here
-                Intent intent = new Intent(ListPatientActivity.this, OptionMenuActivity.class);
-                intent.putExtra("id", cardList.get(position).getTitle());
-                startActivity(intent);
+//                Intent intent = new Intent(ListPatientActivity.this, ListProblemActivity.class);
+//                intent.putExtra("id", problemList.get(position).getTitle());
+//                startActivity(intent);
 
+                if(cardList!=null)
+                {  cardList.get(position);
+                    Intent intent = new Intent(ListPatientActivity.this, PatientProblemList.class);
+
+                    intent.putExtra("USER_ID", userID);
+                    startActivity(intent);
+                    finish();
+
+                }
+                else{
+                 String tilr =   problemList.get(position).getTitle();
+                    Intent intent = new Intent(ListPatientActivity.this, PatientProblemList.class);
+
+                    intent.putExtra("USER_ID", tilr);
+                    startActivity(intent);
+                    finish();
+                }
 
             }
         });
@@ -217,7 +234,7 @@ public class ListPatientActivity extends AppCompatActivity implements Navigation
                 // Handle item click
                 // You can add your logic here
                 Intent intent = new Intent(ListPatientActivity.this, OptionMenuActivity.class);
-                intent.putExtra("id", cardList.get(position).getId());
+                intent.putExtra("id", problemList.get(position).getId());
                 startActivity(intent);
 
 
