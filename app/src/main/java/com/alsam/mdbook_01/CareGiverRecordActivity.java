@@ -13,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -29,12 +28,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
-public class ListRecordActivity extends AppCompatActivity {
+public class CareGiverRecordActivity extends AppCompatActivity {
 
     private static final String TAG = "ListRecordActivity";
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -54,9 +49,9 @@ public class ListRecordActivity extends AppCompatActivity {
         setActionBar(toolbar);
 
 
-        Intent  intent = getIntent();
+        Intent intent = getIntent();
 
-      id =  intent.getStringExtra("id");
+        id =  intent.getStringExtra("id");
 
 
 
@@ -87,12 +82,12 @@ public class ListRecordActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recordRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new RecordAdapter(recordList, ListRecordActivity.this, new RecordAdapter.onItemClickListener() {
+        mAdapter = new RecordAdapter(recordList, CareGiverRecordActivity.this, new RecordAdapter.onItemClickListener() {
             @Override
             public void onItemClick(int position) {
 
-                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
-                addRecord.putExtra("id", id);
+                Intent addRecord = new Intent(CareGiverRecordActivity.this, CareGiverCommentActivity.class);
+                addRecord.putExtra("id", recordList.get(position).getRecordId());
                 addRecord.putExtra("headline",recordList.get(position).getTitle());
                 addRecord.putExtra("description",recordList.get(position).getDescription());
                 addRecord.putExtra("image",recordList.get(position).getPhotos());
@@ -107,7 +102,7 @@ public class ListRecordActivity extends AppCompatActivity {
             @Override
             public void viewmapClick(int postion) {
 
-               int i = postion;
+                int i = postion;
 
 
 
@@ -120,12 +115,14 @@ public class ListRecordActivity extends AppCompatActivity {
             @Override
             public void onItemClick(int position) {
                 recordList.get(position);
-                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
-                 addRecord.putExtra("id", id);
-                 addRecord.putExtra("headline",recordList.get(position).getTitle());
-                 addRecord.putExtra("description",recordList.get(position).getDescription());
-                 addRecord.putExtra("image",recordList.get(position).getPhotos());
-                 addRecord.putExtra("frontPic",recordList.get(position).getFrontPic());
+
+
+                Intent addRecord = new Intent(CareGiverRecordActivity.this, CareGiverCommentActivity.class);
+                addRecord.putExtra("id", recordList.get(position).getRecordId());
+                addRecord.putExtra("headline",recordList.get(position).getTitle());
+                addRecord.putExtra("description",recordList.get(position).getDescription());
+                addRecord.putExtra("image",recordList.get(position).getPhotos());
+                addRecord.putExtra("frontPic",recordList.get(position).getFrontPic());
                 addRecord.putExtra("backPic",recordList.get(position).getBackPic());
                 addRecord.putExtra("lat",recordList.get(position).getGeoLocation().getLat());
                 addRecord.putExtra("lng",recordList.get(position).getGeoLocation().getLong());
@@ -138,14 +135,14 @@ public class ListRecordActivity extends AppCompatActivity {
             public void viewmapClick(int postion) {
                 if (isServicesOK())
                 {
-                    Intent launchmap = new Intent(ListRecordActivity.this, ViewMapActivity.class);
+                    Intent launchmap = new Intent(CareGiverRecordActivity.this, ViewMapActivity.class);
                     if (recordList.get(postion).getLocation() != null){
                         launchmap.putExtra("recieveLat",recordList.get(postion).getLocation().getLat());
                         launchmap.putExtra("recieveLong",recordList.get(postion).getLocation().getLong());
                         launchmap.putExtra("recieveTitle",recordList.get(postion).getLocation().getTitle());
                         startActivity(launchmap);
                     }else {
-                        Toast.makeText(ListRecordActivity.this, "No location for record",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CareGiverRecordActivity.this, "No location for record",Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -239,7 +236,7 @@ public class ListRecordActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot result) {
-                       recordList = new ArrayList<>();
+                        recordList = new ArrayList<>();
 
                         for (QueryDocumentSnapshot document : result) {
                             String title = document.getString("headline") != null ? document.getString("headline") : "";
@@ -251,23 +248,28 @@ public class ListRecordActivity extends AppCompatActivity {
                             String titleK = document.getString("titleK") != null ? document.getString("titleK") : "";
                             String lng = document.getString("longitude") != null ? document.getString("longitude") : "";
 
-                           String  photos = document.getString("image") != null ? document.getString("image") : "";
+                            String  photos = document.getString("image") != null ? document.getString("image") : "";
                             String  comment = document.getString("comment") != null ? document.getString("comment") : "";
 
+                            String recordId = document.getId();
+
+
+
                             GeoLocation geoLocation =null;
-                           if(lat!=null && lng !=null && lat.length()>0)
-                           {
-                            geoLocation = new GeoLocation(Double.parseDouble(lat),Double.parseDouble(lng),titleK);
-                           }
+                            if(lat!=null && lng !=null && lat.length()>0)
+                            {
+                                geoLocation = new GeoLocation(Double.parseDouble(lat),Double.parseDouble(lng),titleK);
+                            }
 
 
                             Record cardItem = new Record(title,"",description,photos,geoLocation) ;
 
 
                             if(title!=null && title.length()>0 && description!=null && description.length()>0)
-
                             {
+
                                 cardItem.setComment(comment);
+                                cardItem.setRecordId(recordId);
                                 recordList.add(cardItem);
 
 
@@ -276,12 +278,13 @@ public class ListRecordActivity extends AppCompatActivity {
 
                         }
 
-                        mAdapter = new RecordAdapter(recordList, ListRecordActivity.this, new RecordAdapter.onItemClickListener() {
+                        mAdapter = new RecordAdapter(recordList, CareGiverRecordActivity.this, new RecordAdapter.onItemClickListener() {
                             @Override
                             public void onItemClick(int position) {
 
-                                Intent addRecord = new Intent(ListRecordActivity.this, AddRecordActivity.class);
-                                addRecord.putExtra("id", id);
+                                Intent addRecord = new Intent(CareGiverRecordActivity.this, CareGiverCommentActivity.class);
+                                addRecord.putExtra("id", recordList.get(position).getRecordId());
+
                                 addRecord.putExtra("headline",recordList.get(position).getTitle());
                                 addRecord.putExtra("description",recordList.get(position).getDescription());
                                 addRecord.putExtra("image",recordList.get(position).getPhotos());
@@ -304,24 +307,24 @@ public class ListRecordActivity extends AppCompatActivity {
 
                             @Override
                             public void viewmapClick(int postion) {
-                           GeoLocation  geoLocation =     recordList.get(postion).getGeoLocation();
+                                GeoLocation  geoLocation =     recordList.get(postion).getGeoLocation();
                                 if(geoLocation!=null)
                                 {
-                                    Intent launchmap = new Intent(ListRecordActivity.this, ViewMapActivity.class);
+                                    Intent launchmap = new Intent(CareGiverRecordActivity.this, ViewMapActivity.class);
                                     if (recordList.get(postion).getLocation() != null){
                                         launchmap.putExtra("recieveLat",String.valueOf(recordList.get(postion).getLocation().getLat()));
                                         launchmap.putExtra("recieveLong",String.valueOf(recordList.get(postion).getLocation().getLong()));
                                         launchmap.putExtra("recieveTitle",String.valueOf(recordList.get(postion).getLocation().getTitle()));
                                         startActivity(launchmap);
                                     }else {
-                                        Toast.makeText(ListRecordActivity.this, "No location for record",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(CareGiverRecordActivity.this, "No location for record",Toast.LENGTH_SHORT).show();
                                     }
 
 
                                 }
                                 else{
 
-                                    Toast.makeText(ListRecordActivity.this,"No Location Found",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(CareGiverRecordActivity.this,"No Location Found",Toast.LENGTH_LONG).show();
                                 }
 
 

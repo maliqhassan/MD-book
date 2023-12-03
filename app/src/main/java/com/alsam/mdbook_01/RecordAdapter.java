@@ -43,6 +43,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         public TextView mComment;
         public ImageButton mAddComment;
         public ImageButton mLocation;
+        public  TextView comment;
 
 
         /**
@@ -60,6 +61,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
             mAddComment = itemView.findViewById(R.id.recordAddComment);
             mLocation = itemView.findViewById(R.id.recordLocation);
 
+            comment = itemView.findViewById(R.id.comment);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -127,7 +129,11 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
         recordViewholder.mTitle.setText(currentRecord.getTitle());
         recordViewholder.mDate.setText(currentRecord.getDate().toString());
         recordViewholder.mComment.setText(currentRecord.getDescription());
-
+        try {
+            recordViewholder.comment.setText(currentRecord.getComment());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         Glide.with(mActivity)

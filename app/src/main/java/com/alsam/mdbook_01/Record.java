@@ -10,10 +10,21 @@ class Record implements Serializable, Comparable {
 
     private String title;
     private String date;
+
+    private  String recordId;
     private String description;
     private  String addressLine;
     private GeoLocation geoLocation;
     private ArrayList<BodyLocation> bodyLocations;
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
+
     private String photos;
 
     public String getAddressLine() {

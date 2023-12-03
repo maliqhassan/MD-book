@@ -33,12 +33,13 @@ class PatientProblemList : AppCompatActivity() {
 
 
 
+            val intent = Intent(this@PatientProblemList, CareGiverRecordActivity::class.java)
+            intent.putExtra("id", id)
+            startActivity(intent)
 
 
 
-           // Toast.makeText(this, "This is a short toast message", Toast.LENGTH_SHORT).show()
-
-
+            // Toast.makeText(this, "This is a short toast message", Toast.LENGTH_SHORT).show()
 
 
             // Handle card item click here if needed
