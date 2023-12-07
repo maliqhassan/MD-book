@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -105,12 +106,20 @@ public class ListPatientActivity extends AppCompatActivity implements Navigation
             @Override
             public void onClick(View v) {
 
-                IntentIntegrator integrator = new IntentIntegrator(ListPatientActivity.this);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-                integrator.setPrompt("Scan a QR Code");
-                integrator.setCameraId(0); // Use the device's default camera
-                integrator.setOrientationLocked(false); // Unlock orientation (optional)
-                integrator.initiateScan();
+
+
+
+                Intent intent = new Intent(ListPatientActivity.this,AddPatient.class);
+                startActivity(intent);
+
+
+//
+//                IntentIntegrator integrator = new IntentIntegrator(ListPatientActivity.this);
+//                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+//                integrator.setPrompt("Scan a QR Code");
+//                integrator.setCameraId(0); // Use the device's default camera
+//                integrator.setOrientationLocked(false); // Unlock orientation (optional)
+//                integrator.initiateScan();
 
 
             }
@@ -153,11 +162,39 @@ public class ListPatientActivity extends AppCompatActivity implements Navigation
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.care_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+
+            SharedPreferences sharedPreferences= getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor  editor = sharedPreferences.edit();
+            editor.remove("USER_ID");
+            editor.remove("userType");
+            editor.apply();
+
+            Intent intent  = new Intent(ListPatientActivity.this,LoginActivity.class);
+            startActivity(intent);
+          //  Toast.makeText(ListPatientActivity.this,"Lofout",Toast.LENGTH_LONG).show();
+            // Handle logout action here
+            // You can add code to sign out the user or perform any other logout-related actions
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void setupNavigationDrawerAndToolbar() {
         setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_small_drawer_icon);
+       // getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_small_drawer_icon);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -264,7 +301,7 @@ public class ListPatientActivity extends AppCompatActivity implements Navigation
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference patientsCollection = db.collection("patients");
 
-        patientsCollection.whereEqualTo("caregiver", CareGiverId)
+        patientsCollection.whereEqualTo("caregiverId", CareGiverId)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override

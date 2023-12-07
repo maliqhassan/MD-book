@@ -20,7 +20,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 app:title="MDBook"
-                app:navigationIcon="@drawable/ic_small_drawer_icon" />
+                app:menu="@menu/care_menu" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
